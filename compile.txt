@@ -1,0 +1,86 @@
+#!/bin/bash
+
+export PROJECTNAME="."
+
+
+echo "the project location is : $PROJECTNAME"
+echo "removing libs"
+vdel -lib $PROJECTNAME/LIB/LIB_RTL -all
+vdel -lib $PROJECTNAME/LIB/LIB_BENCH -all
+
+echo "creating library "
+
+vlib $PROJECTNAME/LIB/LIB_RTL
+vmap LIB_RTL $PROJECTNAME/LIB/LIB_RTL
+vlib $PROJECTNAME/LIB/LIB_BENCH
+vmap LIB_BENCH $PROJECTNAME/LIB/LIB_BENCH
+
+
+echo "compile vhdl sources"
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/ascon_pack.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/pc.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/pl.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/sbox.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/ps.sv
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/dff_320.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/mux.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/permutation.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/xor_begin.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/xor_end.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/permutation_v2.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/register_cipher.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/register_tag.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/full_permutation.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/compteur_init.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/compteur_double_init.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/fsm_moore.sv 
+
+vlog -sv +acc -svinputport=net -work LIB_RTL $PROJECTNAME/SRC/RTL/ascon_top.sv 
+
+
+echo "compile vhdl test bench"
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/pc_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/pl_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/ps_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/permutation_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/xor_begin_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/xor_end_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/permutation_v2_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/full_permutation_tb.sv
+
+vlog -sv +acc -svinputport=net -L LIB_RTL -work LIB_BENCH $PROJECTNAME/SRC/BENCH/ascon_top_tb.sv
+
+
+
+echo "compilation finished"
+echo "start simulation..."
+
+#vsim -L LIB_RTL LIB_BENCH.permutation_v2_tb &
+#vsim -L LIB_RTL LIB_BENCH.full_permutation_tb &
+vsim -L LIB_RTL LIB_BENCH.ascon_top_tb &
+
